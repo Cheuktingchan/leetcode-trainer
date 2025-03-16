@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet, FlatList } from "react-native";
+import { View, Text, TextInput, Button, Alert, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { supabase } from "../utils/supabase";
 import PlaylistListCard, { Playlist } from "./PlaylistListCard";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../routes/navigationTypes";
+import { RouteProp } from "@react-navigation/native";
 
-const Playlists: React.FC<{ userId: string; }> = ({ userId }) => {
+interface PlaylistsProps {
+  navigation: StackNavigationProp<RootStackParamList, 'Playlists'>;
+  route: RouteProp<RootStackParamList, 'Playlists'>;
+}
+
+const Playlists: React.FC<PlaylistsProps> = ({ navigation, route }) => {
   const [playlistName, setPlaylistName] = useState("");
   const [loading, setLoading] = useState(false);
   const [playlists, setPlaylists] = useState<any[]>([]);
+
+  const { userId } = route.params;
 
   async function getPlaylists() {
     try {
@@ -60,7 +70,16 @@ const Playlists: React.FC<{ userId: string; }> = ({ userId }) => {
       <FlatList
         data={playlists}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <PlaylistListCard playlist={{ id: item.id.toString(), name: item.name }} />}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('PlaylistProblems', {
+              playlistId: item.id,
+              playlistName: item.name
+            })}
+          >
+            <PlaylistListCard playlist={{ id: item.id, name: item.name }} />
+          </TouchableOpacity>
+        )}
       />
       <Text style={styles.label}>Create a New Playlist</Text>
       <TextInput

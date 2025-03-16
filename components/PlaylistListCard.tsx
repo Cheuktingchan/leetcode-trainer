@@ -2,12 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Using Ionicons for the "+" button
 
+
 export interface Playlist {
     id: number;
     name: string;
 }
 
 const PlaylistListCard: React.FC<{ playlist: Playlist }> = ({ playlist }) => {
+
+
     return (
         <View style={styles.card}>
             <View style={styles.content}>

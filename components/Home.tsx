@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, Alert, Button } from 'react-native';
 import ProblemListCard from './ProblemListCard';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabase';
 import Playlists from './Playlists';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { RootStackParamList } from '../routes/navigationTypes';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+
+type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 interface HomeProps {
+    navigation: HomeScreenNavigationProp;
     session: Session;
 }
 
-const Home: React.FC<HomeProps> = ({ session }) => {
+const Home: React.FC<HomeProps> = ({ navigation, session }) => {
     const user = session.user;
     const [username, setUsername] = useState<string | null>();
 
@@ -41,7 +46,7 @@ const Home: React.FC<HomeProps> = ({ session }) => {
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Welcome, {username}!</Text>
-            <Playlists userId={user?.id} />
+            <Button title="Go to Playlists" onPress={() => navigation.navigate('Playlists', { userId: session.user.id })} />
         </SafeAreaView>
     );
 };
