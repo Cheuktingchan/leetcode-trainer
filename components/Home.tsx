@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
-import ProblemCard from './ProblemCard';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import ProblemListCard from './ProblemListCard';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabase';
-
-const problems = [
-    { id: '1', title: 'Two Sum', difficulty: 'Easy', progress: 50 },
-    { id: '2', title: 'Binary Search', difficulty: 'Medium', progress: 30 },
-    { id: '3', title: 'Merge Intervals', difficulty: 'Hard', progress: 10 },
-];
+import Playlists from './Playlists';
+import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 
 interface HomeProps {
     session: Session;
@@ -16,7 +12,7 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ session }) => {
     const user = session.user;
-    const [username, setUsername] = useState<string | null>(null);
+    const [username, setUsername] = useState<string | null>();
 
     useEffect(() => {
         async function getUsername() {
@@ -45,11 +41,7 @@ const Home: React.FC<HomeProps> = ({ session }) => {
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Welcome, {username}!</Text>
-            <FlatList
-                data={problems}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <ProblemCard problem={item} />}
-            />
+            <Playlists userId={user?.id} />
         </SafeAreaView>
     );
 };
