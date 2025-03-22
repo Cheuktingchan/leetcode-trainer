@@ -1,28 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Using Ionicons for the "+" button
+import { RootStackParamList } from '../routes/navigationTypes';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
 
 interface Problem {
   id: number;
   title: string;
   difficulty: string;
-  relatedTopics: string[];
+  relatedTopics: string;
 }
 
-const ProblemListCard: React.FC<{ problem: Problem; addToPlaylist: (id: number) => void }> = ({ problem, addToPlaylist }) => {
+const ProblemListCard: React.FC<{ problem: Problem; addToPlaylist: (id: number) => void; handleNavigate: (id: number) => void }> = ({ problem, addToPlaylist, handleNavigate }) => {
+
   return (
-    <View style={styles.card}>
-      <View style={styles.content}>
-        <View style={styles.textContainer}>
-          <Text style={styles.title}>{problem.title}</Text>
-          <Text style={styles.difficulty}>Difficulty: {problem.difficulty}</Text>
-          <Text style={styles.relatedTopics}>Related Topics: {problem.relatedTopics}</Text>
+    <TouchableOpacity onPress={() => handleNavigate(problem.id)}>
+      <View style={styles.card}>
+        <View style={styles.content}>
+          <View style={styles.textContainer}>
+            <Text style={styles.title}>{problem.title}</Text>
+            <Text style={styles.difficulty}>Difficulty: {problem.difficulty}</Text>
+            <Text style={styles.relatedTopics}>Related Topics: {problem.relatedTopics}</Text>
+          </View>
+          <TouchableOpacity onPress={() => addToPlaylist(problem.id)} style={styles.addButton}>
+            <Ionicons name="add-circle-outline" size={28} color="#007AFF" />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => addToPlaylist(problem.id)} style={styles.addButton}>
-          <Ionicons name="add-circle-outline" size={28} color="#007AFF" />
-        </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

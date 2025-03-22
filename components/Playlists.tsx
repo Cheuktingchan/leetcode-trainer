@@ -47,7 +47,7 @@ const Playlists: React.FC<PlaylistsProps> = ({ navigation, route }) => {
       .insert([
         { name: playlistName, user_id: userId },
       ])
-      .select(); // Explicitly select the inserted rows
+      .select();
 
     if (error) {
       Alert.alert("Error", error.message);
@@ -57,7 +57,7 @@ const Playlists: React.FC<PlaylistsProps> = ({ navigation, route }) => {
       // Add the newly inserted playlist to the existing playlists
       setPlaylists((prevPlaylists) => [
         ...prevPlaylists,
-        ...data, // Add the newly inserted playlist(s)
+        ...data,
       ]);
     }
   };

@@ -11,6 +11,7 @@ import { RootStackParamList } from './routes/navigationTypes'
 import { NavigationContainer } from '@react-navigation/native'
 import Playlists from './components/Playlists'
 import PlaylistProblems from './components/PlaylistProblems'
+import ProblemCard from './components/ProblemCard'
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -39,6 +40,7 @@ export default function App() {
         </Stack.Screen>
         <Stack.Screen name="Playlists" component={Playlists} />
         <Stack.Screen name="PlaylistProblems" component={PlaylistProblems} />
+        <Stack.Screen name="ProblemCard" component={ProblemCard} />
       </Stack.Navigator>
     </NavigationContainer>
   );
