@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './utils/supabase'
-import Auth from './components/Auth'
-import Account from './components/Account'
 import { Text } from 'react-native'
 import { Session } from '@supabase/supabase-js'
 import React from 'react'

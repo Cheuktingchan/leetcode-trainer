@@ -97,7 +97,7 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{playlistName} (ID: {playlistId})</Text>
+            <Text style={styles.title}>{playlistName}:</Text>
 
             {/* Search Bar */}
             <TextInput
@@ -106,7 +106,18 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
                 value={searchQuery}
                 onChangeText={(text) => setSearchQuery(text)}
             />
-
+            {/* All Problems with Add Option */}
+            <Text style={styles.sectionTitle}>All Problems:</Text>
+            <FlatList
+                data={filteredProblems}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                    <View style={styles.problemItem}>
+                        <ProblemListCard problem={item} addToPlaylist={addToPlaylist} handleNavigate={handleNavigate} />
+                    </View>
+                )}
+            />
+            
             {/* Problems in Playlist */}
             <Text style={styles.sectionTitle}>Problems in this Playlist:</Text>
             <FlatList
@@ -117,18 +128,6 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
                         <ProblemListCard problem={item} addToPlaylist={function (id: number): void {
                             throw new Error("Function not implemented.");
                         } } handleNavigate={handleNavigate} />
-                    </View>
-                )}
-            />
-
-            {/* All Problems with Add Option */}
-            <Text style={styles.sectionTitle}>All Problems:</Text>
-            <FlatList
-                data={filteredProblems}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                    <View style={styles.problemItem}>
-                        <ProblemListCard problem={item} addToPlaylist={addToPlaylist} handleNavigate={handleNavigate} />
                     </View>
                 )}
             />

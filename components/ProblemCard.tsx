@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { supabase } from '../utils/supabase';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../routes/navigationTypes';
+import SolutionTab from './SolutionTab';
+import ProblemDetails from './ProblemDetails';
+
+const Tab = createMaterialTopTabNavigator();
 
 type ProblemCardNavigationProp = StackNavigationProp<RootStackParamList, 'ProblemCard'>;
 type ProblemCardRouteProp = RouteProp<RootStackParamList, 'ProblemCard'>;
@@ -37,21 +42,19 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ route }) => {
     fetchProblem();
   }, [problemId]);
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#007AFF" />;
-  }
+  if (loading) return <ActivityIndicator size="large" color="#007AFF" />;
 
-  if (!problem) {
-    return <Text style={styles.errorText}>Problem not found</Text>;
-  }
+  if (!problem) return <Text style={styles.errorText}>Problem not found</Text>;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>{problem.title}</Text>
-      <Text style={styles.info}>Difficulty: {problem.difficulty}</Text>
-      <Text style={styles.info}>Related Topics: {problem.related_topics}</Text>
-      <Text style={styles.description}>{problem.description || 'No description available.'}</Text>
-    </ScrollView>
+    <Tab.Navigator>
+      <Tab.Screen name="Problem Details">
+        {() => <ProblemDetails problem={problem} />}
+      </Tab.Screen>
+      <Tab.Screen name="Solution">
+        {() => <SolutionTab problemId={problemId} />}
+      </Tab.Screen>
+    </Tab.Navigator>
   );
 };
 
