@@ -15,4 +15,4 @@ declare module 'react-native-syntax-highlighter' {
 declare module 'react-syntax-highlighter/styles/hljs' {
     const value: any;
     export = value;
-  }
+}

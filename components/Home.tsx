@@ -7,6 +7,7 @@ import Playlists from './Playlists';
 import { RootStackParamList } from '../routes/navigationTypes';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp, useNavigation } from '@react-navigation/native';
+import Account from './Account';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -42,6 +43,10 @@ const Home: React.FC<HomeProps> = ({ navigation, session }) => {
 
         getUsername();
     }, [session, supabase, user?.id]);
+
+    if (!username) {
+        <Account session={session}/>
+    }
 
     return (
         <SafeAreaView style={styles.container}>

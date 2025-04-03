@@ -117,7 +117,7 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
                     </View>
                 )}
             />
-            
+
             {/* Problems in Playlist */}
             <Text style={styles.sectionTitle}>Problems in this Playlist:</Text>
             <FlatList
@@ -127,7 +127,7 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
                     <View style={styles.problemItem}>
                         <ProblemListCard problem={item} addToPlaylist={function (id: number): void {
                             throw new Error("Function not implemented.");
-                        } } handleNavigate={handleNavigate} />
+                        }} handleNavigate={handleNavigate} />
                     </View>
                 )}
             />

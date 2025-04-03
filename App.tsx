@@ -10,6 +10,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import Playlists from './components/Playlists'
 import PlaylistProblems from './components/PlaylistProblems'
 import ProblemCard from './components/ProblemCard'
+import Auth from './components/Auth'
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -27,7 +28,7 @@ export default function App() {
   }, [])
 
   if (session === null) {
-    return <Text>Loading session...</Text>;
+    return <Auth/>;
   }
 
   return (
