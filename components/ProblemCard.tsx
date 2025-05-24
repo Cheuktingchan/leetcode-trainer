@@ -6,6 +6,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../routes/navigationTypes';
 import SolutionTab from './SolutionTab';
+import SolveTab from './SolveTab';
 import ProblemDetails from './ProblemDetails';
 
 const Tab = createMaterialTopTabNavigator();
@@ -50,6 +51,9 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ route }) => {
         <Tab.Navigator>
             <Tab.Screen name="Problem Details">
                 {() => <ProblemDetails problem={problem} />}
+            </Tab.Screen>
+            <Tab.Screen name="Solve">
+                {() => <SolveTab problemId={problemId} />}
             </Tab.Screen>
             <Tab.Screen name="Solution">
                 {() => <SolutionTab problemId={problemId} />}
