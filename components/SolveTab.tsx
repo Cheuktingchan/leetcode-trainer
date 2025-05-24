@@ -32,7 +32,9 @@ const SolveTab: React.FC<{ problemId: number }> = ({ problemId }) => {
   const renderItem = ({ item, drag, isActive }: RenderItemParams<PseudocodeStep>) => {
     return (
       <View style={[styles.item, isActive && styles.activeItem]}>
-        <Text onLongPress={drag} style={styles.itemText}>{item.label}</Text>
+        <Text onLongPress={drag} style={styles.itemText}>
+          {item.label}
+        </Text>
       </View>
     );
   };
@@ -45,7 +47,7 @@ const SolveTab: React.FC<{ problemId: number }> = ({ problemId }) => {
         <DraggableFlatList
           data={steps}
           onDragEnd={({ data }) => setSteps(data)}
-          keyExtractor={(item) => item.key}
+          keyExtractor={item => item.key}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 20 }}
         />
