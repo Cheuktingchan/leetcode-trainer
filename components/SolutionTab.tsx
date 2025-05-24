@@ -82,11 +82,7 @@ const SolutionTab: React.FC<{ problemId: number }> = ({ problemId }) => {
 
   if (loading) return <ActivityIndicator size="large" color="#007AFF" />;
   if (!solution)
-    return (
-      <Text style={styles.noSolution}>
-        No solution available for this problem.
-      </Text>
-    );
+    return <Text style={styles.noSolution}>No solution available for this problem.</Text>;
 
   const codeWithLineNumbers = solution.python_solutions
     .split('\n')

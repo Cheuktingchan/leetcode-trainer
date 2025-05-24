@@ -4,14 +4,14 @@ import { Session } from '@supabase/supabase-js';
 
 // Define the type for navigation stack
 export type RootStackParamList = {
-    Home: { session: Session };
-    Playlists: { userId: string };
-    PlaylistListCard: {
-        id: number;
-        name: string
-    };
-    PlaylistProblems: { playlistId: number; playlistName: string };
-    ProblemCard: { problemId: number };
+  Home: { session: Session };
+  Playlists: { userId: string };
+  PlaylistListCard: {
+    id: number;
+    name: string;
+  };
+  PlaylistProblems: { playlistId: number; playlistName: string };
+  ProblemCard: { problemId: number };
 };
 
 // Define navigation prop for a specific screen
