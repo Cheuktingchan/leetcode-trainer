@@ -4,16 +4,10 @@ import { Ionicons } from '@expo/vector-icons'; // Using Ionicons for the "+" but
 import { RootStackParamList } from '../routes/navigationTypes';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-
-interface Problem {
-  id: number;
-  title: string;
-  difficulty: string;
-  relatedTopics: string;
-}
+import { ProblemListItem } from '../types/problem';
 
 const ProblemListCard: React.FC<{
-  problem: Problem;
+  problem: ProblemListItem;
   addToPlaylist: (id: number) => void;
   handleNavigate: (id: number) => void;
 }> = ({ problem, addToPlaylist, handleNavigate }) => {
