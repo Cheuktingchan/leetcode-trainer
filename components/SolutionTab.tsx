@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-  View,
   Image,
   Text,
   StyleSheet,
   ActivityIndicator,
   ScrollView,
   TouchableOpacity,
-  Alert,
   Button,
   Linking,
 } from 'react-native';
@@ -17,8 +15,17 @@ import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 const youtubeApiKey: string = process.env.EXPO_PUBLIC_YOUTUBE_API_KEY!;
 
+interface Solution {
+  id: number;
+  number: number;
+  user: string;
+  python_solutions: string;
+  problem_title: string;
+  upvotes: number;
+}
+
 const SolutionTab: React.FC<{ problemId: number }> = ({ problemId }) => {
-  const [solution, setSolution] = useState<any>(null);
+  const [solution, setSolution] = useState<Solution | null>(null);
   const [loading, setLoading] = useState(true);
   const [videoUrl, setVideoUrl] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
@@ -82,11 +89,7 @@ const SolutionTab: React.FC<{ problemId: number }> = ({ problemId }) => {
 
   if (loading) return <ActivityIndicator size="large" color="#007AFF" />;
   if (!solution)
-    return (
-      <Text style={styles.noSolution}>
-        No solution available for this problem.
-      </Text>
-    );
+    return <Text style={styles.noSolution}>No solution available for this problem.</Text>;
 
   const codeWithLineNumbers = solution.python_solutions
     .split('\n')
@@ -97,13 +100,7 @@ const SolutionTab: React.FC<{ problemId: number }> = ({ problemId }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.solutionTitle}>Solution by {solution.user}</Text>
 
-      <SyntaxHighlighter
-        language="python"
-        style={atomOneDark}
-        customStyle={{
-          borderRadius: 8,
-        }}
-      >
+      <SyntaxHighlighter language="python" style={atomOneDark} customStyle={styles.codeBlock}>
         {codeWithLineNumbers}
       </SyntaxHighlighter>
 
@@ -146,6 +143,9 @@ const styles = StyleSheet.create({
     height: 180,
     marginTop: 20,
     borderRadius: 10,
+  },
+  codeBlock: {
+    borderRadius: 8,
   },
 });
 

@@ -12,8 +12,11 @@ interface Problem {
   relatedTopics: string;
 }
 
-const ProblemListCard: React.FC<{ problem: Problem; addToPlaylist: (id: number) => void; handleNavigate: (id: number) => void }> = ({ problem, addToPlaylist, handleNavigate }) => {
-
+const ProblemListCard: React.FC<{
+  problem: Problem;
+  addToPlaylist: (id: number) => void;
+  handleNavigate: (id: number) => void;
+}> = ({ problem, addToPlaylist, handleNavigate }) => {
   return (
     <TouchableOpacity onPress={() => handleNavigate(problem.id)}>
       <View style={styles.card}>
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 10,
     elevation: 3,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
