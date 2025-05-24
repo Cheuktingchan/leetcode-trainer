@@ -4,9 +4,24 @@ import { RootStackParamList } from '../routes/navigationTypes';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import React from 'react';
-import { FlatList, Text, View, StyleSheet, TextInput, Alert, ScrollView } from 'react-native';
+import {
+  FlatList,
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  Alert,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import ProblemListCard from './ProblemListCard';
-import { Problem } from '../types/problem';
+
+interface Problem {
+  id: number;
+  title: string;
+  difficulty: string;
+  relatedTopics: string;
+}
 
 type PlaylistProblemsNavigationProp = StackNavigationProp<RootStackParamList, 'PlaylistProblems'>;
 
@@ -20,47 +35,99 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
   const [problems, setProblems] = useState<Problem[]>([]);
   const [playlistProblems, setPlaylistProblems] = useState<Problem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const ITEMS_PER_PAGE = 10;
+
+  // Separate function to fetch playlist problems
+  const fetchPlaylistProblems = async () => {
+    try {
+      const { data: playlistData, error: playlistError } = await supabase
+        .from('playlist_problems')
+        .select('problem_id')
+        .eq('playlist_id', playlistId);
+
+      if (playlistError) throw playlistError;
+
+      const problemIdsInPlaylist = (playlistData || []).map(p => p.problem_id);
+
+      const { data: problemsData, error: problemsError } = await supabase
+        .from('problems')
+        .select('id, title, difficulty, related_topics')
+        .in('id', problemIdsInPlaylist);
+
+      if (problemsError) throw problemsError;
+
+      // Map related_topics to relatedTopics to match the Problem interface
+      const mappedProblems = (problemsData || []).map(p => ({
+        ...p,
+        relatedTopics: p.related_topics,
+      }));
+
+      setPlaylistProblems(mappedProblems);
+    } catch (error) {
+      console.error('Failed to fetch playlist problems:', error);
+      Alert.alert('Error', 'Could not fetch playlist problems');
+    }
+  };
+
+  const fetchProblems = async (pageNumber: number, search: string = '') => {
+    try {
+      setLoading(true);
+      const from = pageNumber * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
+      let query = supabase
+        .from('problems')
+        .select('id, title, difficulty, related_topics')
+        .range(from, to);
+
+      if (search) {
+        query = query.ilike('title', `%${search}%`);
+      }
+
+      const { data: newProblems, error } = await query;
+
+      console.log('newProblems', newProblems);
+
+      if (error) throw error;
+
+      // Map related_topics to relatedTopics to match the Problem interface
+      const mappedNewProblems = (newProblems || []).map(p => ({
+        ...p,
+        relatedTopics: p.related_topics,
+      }));
+
+      if (pageNumber === 0) {
+        setProblems(mappedNewProblems);
+      } else {
+        setProblems(prev => [...prev, ...mappedNewProblems]);
+      }
+
+      setHasMore((newProblems || []).length === ITEMS_PER_PAGE);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to fetch problems');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchProblems() {
-      try {
-        const { data: allProblems, error } = await supabase.from('problems').select();
+    fetchProblems(0, searchQuery);
+  }, [searchQuery]);
 
-        if (error) throw error;
-
-        setProblems(allProblems || []);
-
-        // Fetch problems in the current playlist
-        const { data: playlistData, error: playlistError } = await supabase
-          .from('playlist_problems')
-          .select('problem_id')
-          .eq('playlist_id', playlistId);
-
-        if (playlistError) throw playlistError;
-
-        // Extract problem IDs in playlist
-        const problemIdsInPlaylist = (playlistData || []).map(p => p.problem_id);
-
-        // Filter problems that are already in the playlist
-        const problemsInPlaylist = (allProblems || []).filter(p =>
-          problemIdsInPlaylist.includes(p.id)
-        );
-
-        setPlaylistProblems(problemsInPlaylist);
-      } catch (error) {
-        console.error(error);
-        setProblems([]);
-        setPlaylistProblems([]);
-      }
-    }
-
-    fetchProblems();
+  useEffect(() => {
+    fetchPlaylistProblems();
   }, [playlistId]);
 
-  // Handle search filtering
-  const filteredProblems = searchQuery
-    ? problems.filter(problem => problem.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    : problems;
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      setPage(prev => prev + 1);
+      fetchProblems(page + 1, searchQuery);
+    }
+  };
 
   const addToPlaylist = async (problemId: number) => {
     try {
@@ -93,27 +160,55 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
     navigation.navigate('ProblemCard', { problemId: problemId });
   };
 
+  const renderFooter = () => {
+    if (!loading) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color="#0000ff" />
+      </View>
+    );
+  };
+
+  const renderEmptyList = (message: string) => {
+    if (loading) return null;
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>{message}</Text>
+      </View>
+    );
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>{playlistName}:</Text>
 
-        {/* Search Bar */}
         <TextInput
           style={styles.input}
           placeholder="Search problems..."
           value={searchQuery}
-          onChangeText={text => setSearchQuery(text)}
+          onChangeText={text => {
+            setSearchQuery(text);
+            setPage(0);
+            setProblems([]);
+          }}
         />
 
-        {/* All Problems with Add Option */}
         <Text style={styles.sectionTitle}>All Problems:</Text>
         <View style={styles.listContainer}>
           <FlatList
-            data={filteredProblems}
+            data={problems}
             keyExtractor={item => item.id.toString()}
             scrollEnabled={true}
             nestedScrollEnabled={true}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={() =>
+              renderEmptyList(
+                searchQuery ? 'No problems found matching your search' : 'No problems available'
+              )
+            }
             renderItem={({ item }) => (
               <View style={styles.problemItem}>
                 <ProblemListCard
@@ -126,7 +221,6 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
           />
         </View>
 
-        {/* Problems in Playlist */}
         <Text style={styles.sectionTitle}>Problems in this Playlist:</Text>
         <View style={styles.listContainer}>
           <FlatList
@@ -134,6 +228,7 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
             keyExtractor={item => item.id.toString()}
             scrollEnabled={true}
             nestedScrollEnabled={true}
+            ListEmptyComponent={() => renderEmptyList('No problems added to this playlist yet')}
             renderItem={({ item }) => (
               <View style={styles.problemItem}>
                 <ProblemListCard
@@ -192,6 +287,22 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderRadius: 8,
     marginVertical: 5,
+  },
+  footerLoader: {
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    height: 200,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
   },
 });
 

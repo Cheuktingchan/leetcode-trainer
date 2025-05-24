@@ -5,3 +5,10 @@ export interface Problem {
   difficulty: string;
   relatedTopics: string;
 }
+
+export interface ProblemListItem {
+  id: number;
+  title: string;
+  difficulty: string;
+  relatedTopics: string;
+}
