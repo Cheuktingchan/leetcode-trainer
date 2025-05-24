@@ -4,7 +4,7 @@ import { RootStackParamList } from '../routes/navigationTypes';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import React from 'react';
-import { FlatList, Text, View, StyleSheet, TextInput, Alert } from 'react-native';
+import { FlatList, Text, View, StyleSheet, TextInput, Alert, ScrollView } from 'react-native';
 import ProblemListCard from './ProblemListCard';
 import { Problem } from '../types/problem';
 
@@ -94,58 +94,71 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{playlistName}:</Text>
+    <ScrollView style={styles.container}>
+      <View style={styles.content}>
+        <Text style={styles.title}>{playlistName}:</Text>
 
-      {/* Search Bar */}
-      <TextInput
-        style={styles.input}
-        placeholder="Search problems..."
-        value={searchQuery}
-        onChangeText={text => setSearchQuery(text)}
-      />
-      {/* All Problems with Add Option */}
-      <Text style={styles.sectionTitle}>All Problems:</Text>
-      <FlatList
-        data={filteredProblems}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.problemItem}>
-            <ProblemListCard
-              problem={item}
-              addToPlaylist={addToPlaylist}
-              handleNavigate={handleNavigate}
-            />
-          </View>
-        )}
-      />
+        {/* Search Bar */}
+        <TextInput
+          style={styles.input}
+          placeholder="Search problems..."
+          value={searchQuery}
+          onChangeText={text => setSearchQuery(text)}
+        />
 
-      {/* Problems in Playlist */}
-      <Text style={styles.sectionTitle}>Problems in this Playlist:</Text>
-      <FlatList
-        data={playlistProblems}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.problemItem}>
-            <ProblemListCard
-              problem={item}
-              addToPlaylist={function (id: number): void {
-                throw new Error('Function not implemented.');
-              }}
-              handleNavigate={handleNavigate}
-            />
-          </View>
-        )}
-      />
-    </View>
+        {/* All Problems with Add Option */}
+        <Text style={styles.sectionTitle}>All Problems:</Text>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={filteredProblems}
+            keyExtractor={item => item.id.toString()}
+            scrollEnabled={true}
+            nestedScrollEnabled={true}
+            renderItem={({ item }) => (
+              <View style={styles.problemItem}>
+                <ProblemListCard
+                  problem={item}
+                  addToPlaylist={addToPlaylist}
+                  handleNavigate={handleNavigate}
+                />
+              </View>
+            )}
+          />
+        </View>
+
+        {/* Problems in Playlist */}
+        <Text style={styles.sectionTitle}>Problems in this Playlist:</Text>
+        <View style={styles.listContainer}>
+          <FlatList
+            data={playlistProblems}
+            keyExtractor={item => item.id.toString()}
+            scrollEnabled={true}
+            nestedScrollEnabled={true}
+            renderItem={({ item }) => (
+              <View style={styles.problemItem}>
+                <ProblemListCard
+                  problem={item}
+                  addToPlaylist={function (id: number): void {
+                    throw new Error('Function not implemented.');
+                  }}
+                  handleNavigate={handleNavigate}
+                />
+              </View>
+            )}
+          />
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 15,
     backgroundColor: '#fff',
+  },
+  content: {
+    padding: 15,
   },
   title: {
     fontSize: 20,
@@ -162,7 +175,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 5,
   },
   problemItem: {
@@ -172,6 +185,13 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 5,
     backgroundColor: '#f9f9f9',
+  },
+  listContainer: {
+    height: 300,
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 8,
+    marginVertical: 5,
   },
 });
 
