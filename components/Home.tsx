@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, Alert, Button } from 'react-native';
-import ProblemListCard from './ProblemListCard';
+import { Text, StyleSheet, SafeAreaView, Button } from 'react-native';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '../utils/supabase';
-import Playlists from './Playlists';
 import { RootStackParamList } from '../routes/navigationTypes';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp, useNavigation } from '@react-navigation/native';
 import Account from './Account';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -36,13 +33,13 @@ const Home: React.FC<HomeProps> = ({ navigation, session }) => {
         if (data) {
           setUsername(data.username);
         }
-      } catch (error) {
+      } catch {
         setUsername('User');
       }
     }
 
     getUsername();
-  }, [session, supabase, user?.id]);
+  }, [user?.id]);
 
   if (!username) {
     <Account session={session} />;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../utils/supabase';
 import { StyleSheet, View, Alert } from 'react-native';
 import { Button, Input } from '@rneui/themed';
@@ -11,11 +11,7 @@ export default function Account({ session }: { session: Session }) {
   const [website, setWebsite] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
 
-  useEffect(() => {
-    if (session) getProfile();
-  }, [session]);
-
-  async function getProfile() {
+  const getProfile = useCallback(async () => {
     try {
       setLoading(true);
       if (!session?.user) throw new Error('No user on the session!');
@@ -41,7 +37,11 @@ export default function Account({ session }: { session: Session }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [session?.user]);
+
+  useEffect(() => {
+    if (session) getProfile();
+  }, [session, getProfile]);
 
   async function updateProfile({
     username,

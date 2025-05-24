@@ -4,8 +4,9 @@ import { RootStackParamList } from '../routes/navigationTypes';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
 import React from 'react';
-import { FlatList, Text, View, StyleSheet, TextInput, Alert, Button } from 'react-native';
+import { FlatList, Text, View, StyleSheet, TextInput, Alert } from 'react-native';
 import ProblemListCard from './ProblemListCard';
+import { Problem } from '../types/problem';
 
 type PlaylistProblemsNavigationProp = StackNavigationProp<RootStackParamList, 'PlaylistProblems'>;
 
@@ -16,8 +17,8 @@ interface PlaylistProblemsProps {
 
 const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }) => {
   const { playlistId, playlistName } = route.params;
-  const [problems, setProblems] = useState<any[]>([]);
-  const [playlistProblems, setPlaylistProblems] = useState<any[]>([]);
+  const [problems, setProblems] = useState<Problem[]>([]);
+  const [playlistProblems, setPlaylistProblems] = useState<Problem[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
@@ -83,6 +84,7 @@ const PlaylistProblems: React.FC<PlaylistProblemsProps> = ({ navigation, route }
 
       Alert.alert('Success', 'Problem added to playlist!');
     } catch (error) {
+      console.error('Failed to add problem:', error);
       Alert.alert('Error', 'Could not add problem to playlist.');
     }
   };

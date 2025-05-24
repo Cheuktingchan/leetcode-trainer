@@ -20,7 +20,7 @@ const initialSteps: PseudocodeStep[] = correctOrder
   .map((step, index) => ({ key: `${index}`, label: step }))
   .sort(() => Math.random() - 0.5); // Shuffle
 
-const SolveTab: React.FC<{ problemId: number }> = ({ problemId }) => {
+const SolveTab: React.FC = () => {
   const [steps, setSteps] = useState<PseudocodeStep[]>(initialSteps);
 
   const checkOrder = () => {
@@ -43,17 +43,17 @@ const SolveTab: React.FC<{ problemId: number }> = ({ problemId }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Arrange the pseudocode in correct order</Text>
 
-      <View style={{ flex: 1 }}>
+      <View style={styles.listContainer}>
         <DraggableFlatList
           data={steps}
           onDragEnd={({ data }) => setSteps(data)}
           keyExtractor={item => item.key}
           renderItem={renderItem}
-          contentContainerStyle={{ paddingBottom: 20 }}
+          contentContainerStyle={styles.listContent}
         />
       </View>
 
-      <View style={{ paddingVertical: 10 }}>
+      <View style={styles.buttonContainer}>
         <Button title="Check Order" onPress={checkOrder} />
       </View>
     </View>
@@ -84,6 +84,15 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
+  },
+  listContainer: {
+    flex: 1,
+  },
+  listContent: {
+    paddingBottom: 20,
+  },
+  buttonContainer: {
+    paddingVertical: 10,
   },
 });
 

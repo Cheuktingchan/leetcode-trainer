@@ -10,10 +10,16 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { supabase } from '../utils/supabase';
-import PlaylistListCard, { Playlist } from './PlaylistListCard';
+import PlaylistListCard from './PlaylistListCard';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../routes/navigationTypes';
 import { RouteProp } from '@react-navigation/native';
+
+interface Playlist {
+  id: number;
+  name: string;
+  user_id: string;
+}
 
 interface PlaylistsProps {
   navigation: StackNavigationProp<RootStackParamList, 'Playlists'>;
@@ -23,7 +29,7 @@ interface PlaylistsProps {
 const Playlists: React.FC<PlaylistsProps> = ({ navigation, route }) => {
   const [playlistName, setPlaylistName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [playlists, setPlaylists] = useState<any[]>([]);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const { userId } = route.params;
 
@@ -39,6 +45,7 @@ const Playlists: React.FC<PlaylistsProps> = ({ navigation, route }) => {
         setPlaylists(data);
       }
     } catch (error) {
+      console.error('Failed to fetch playlists:', error);
       setPlaylists([]);
     }
   }
@@ -81,7 +88,16 @@ const Playlists: React.FC<PlaylistsProps> = ({ navigation, route }) => {
               })
             }
           >
-            <PlaylistListCard playlist={{ id: item.id, name: item.name }} />
+            <PlaylistListCard
+              title={item.name}
+              description=""
+              onPress={() =>
+                navigation.navigate('PlaylistProblems', {
+                  playlistId: item.id,
+                  playlistName: item.name,
+                })
+              }
+            />
           </TouchableOpacity>
         )}
       />

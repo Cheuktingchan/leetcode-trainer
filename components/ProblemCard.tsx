@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { supabase } from '../utils/supabase';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -27,9 +19,17 @@ interface ProblemCardProps {
   route: ProblemCardRouteProp;
 }
 
+interface Problem {
+  id: number;
+  title: string;
+  description: string;
+  difficulty: string;
+  // Add other problem properties as needed
+}
+
 const ProblemCard: React.FC<ProblemCardProps> = ({ route }) => {
   const { problemId } = route.params;
-  const [problem, setProblem] = useState<any>(null);
+  const [problem, setProblem] = useState<Problem | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -65,25 +65,6 @@ const ProblemCard: React.FC<ProblemCardProps> = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  info: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 20,
-  },
   errorText: {
     fontSize: 16,
     color: 'red',

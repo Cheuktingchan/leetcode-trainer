@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './utils/supabase';
-import { Text } from 'react-native';
 import { Session } from '@supabase/supabase-js';
 import React from 'react';
 import Home from './components/Home';
